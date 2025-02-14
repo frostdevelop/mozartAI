@@ -6,7 +6,8 @@ from trl import SFTTrainer
 #from huggingface_hub import notebook_login
 #notebook_login()
 
-model_id = "meta-llama/Meta-Llama-3-8B-Instruct" #mistralai/Mixtral-8x7B-Instruct-v0.1
+#model_id = "meta-llama/Meta-Llama-3-8B-Instruct" #mistralai/Mixtral-8x7B-Instruct-v0.1
+model_id = "MOZART"
 system = "You are MOZART, an AI tutoring chatbot. Answer the following questions and ask questions to quiz the user on the topic."
 
 mozartDataset = load_dataset("json",data_files="./data/training.jsonl")
@@ -22,7 +23,8 @@ model = AutoModelForCausalLM.from_pretrained(
     model_id,
     device_map='auto',
     quantization_config=quantConf,
-    use_cache=True,
+    torch_dtype=torch.bfloat16,
+    #use_cache=True,
     attn_implementation="flash_attention_2"
 )
 tokenizer = AutoTokenizer.from_pretrained(model_id)
@@ -94,15 +96,15 @@ if torch.cuda.device_count() > 1: # If more than 1 GPU
 trainArgs = TrainingArguments(
   output_dir = "MOZART",
   #num_train_epochs=5,
-  max_steps = 100, # comment out this line if you want to train in epochs #500
-  per_device_train_batch_size = 16,
-  #per_device_eval_batch_size = 16,
+  max_steps = 10, # comment out this line if you want to train in epochs #500
+  per_device_train_batch_size = 5,
+  per_device_eval_batch_size = 2,
   warmup_steps = 3,
-  logging_steps=10,
+  logging_steps=4,
   save_strategy="epoch",
-  #evaluation_strategy="epoch",
-  evaluation_strategy="steps",
-  eval_steps=10, # comment out this line if you want to evaluate at the end of each epoch
+  #eval_strategy="steps",
+  eval_strategy="no",
+  eval_steps=4, # comment out this line if you want to evaluate at the end of each epoch
   learning_rate=2.5e-4,
   bf16=True,
   # lr_scheduler_type='constant',
@@ -131,7 +133,10 @@ trainer = SFTTrainer(
   eval_dataset=mozartDataset["train"]
 )
 
-trainer.train();
-trainer.save_model("MOZART")
+iter = 0
 
-fmodel = model.merge_and_unload();
+while True:
+    print('Iteration: '+str(iter))
+    trainer.train()
+    trainer.save_model("MOZART")
+    #fmodel = model.merge_and_unload();
