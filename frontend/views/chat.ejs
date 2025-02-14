@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mozart - Chat</title>
+  <%- include('./components/meta') %>
+  <script src="/socket.io/socket.io.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+  <!-- The loading of KaTeX is deferred to speed up page rendering -->
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js" integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="/css/chat.css">
+  <link rel="stylesheet" href="/css/neo.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+</head>
+
+<body lang="en">
+  <header class="mart-navhead">
+  <%- include('./components/navbar.ejs') %>
+  </header>
+  <div id="mart-content">
+    <div id="mart-main">
+      <div id="mart-sidebar">
+      </div>
+      <div id="mart-chat">
+        <div id="mart-msgs">
+          <div id="mart-header">
+            <h2>Mozart</h2>
+        </div>
+          <div class="scrollarea">
+          <!--
+          <div class="mart-msg">
+            <img class="mart-pfp"/>
+            <div class="text">
+            <span class="name">Name</span>
+            <br/>
+            <span class="content">Content</span>
+            </div>
+            <div class="mart-question-cont" value="0">
+              <div class="contsolid mart-question">
+                <span class="prompt">Why did the chicken cross the road?</span>
+                <div>
+                <input placeholder="Answer" type='text'></input><button class="button blue" onclick="this.parentNode.parentNode.getElementsByClassName('answer')[0].classList.toggle('sho');/*children[0].remove()*/">Submit</button>
+                </div>
+                <span class="answer">
+                  To get to the other side
+                </span>
+              </div>
+            </div>
+            <div class="mart-question-cont" value="1">
+              <div class="contsolid mart-question">
+              <span class="prompt">Why did the chicken cross the road?</span>
+              <label class='contsolid'>
+                <input type='radio'></input> To get to the other Side
+              </label>
+            <label class='contsolid'>
+                <input type='radio'></input> To get home
+              </label>
+            <button class="button blue">Submit</button>
+              </div>
+            </div>
+            <div class="mart-question-cont" value="2">
+              <div class="contsolid mart-question">
+              <span class="prompt">Why did the chicken cross the road?</span>
+              <label class='contsolid'>
+                <input type='checkbox'></input> To get to the other Side
+              </label>
+            <label class='contsolid'>
+                <input type='checkbox'></input> To get home
+              </label>
+            <button class="button blue">Submit</button>
+              </div>
+            </div>
+          </div>
+          -->
+          </div>
+        </div>
+        <div id="mart-inp-cont">
+        <textarea class="mart-inp" placeholder="I would like to..." rows="1"></textarea>
+        <button class="button iconbutton blue mart-sendbtn">
+          <svg width="24" height="24" class="buttonicon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M3.11062 6.23448L33.152 17.5L3.11062 28.7655L11.7752 18.1317L12.2899 17.5L11.7752 16.8683L3.11062 6.23448Z" stroke="black" stroke-width="2"/>
+<rect x="12" y="16" width="20" height="3" fill="currentcolor"/>
+</svg>
+        </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <%- include('./components/footer.ejs') -%>
+  <script src='/js/chat.js'></script>
+  <script src='/js/nav.js'></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.4/dist/purify.min.js"></script>
+</body>
+</html>

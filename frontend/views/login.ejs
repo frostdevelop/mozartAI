@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mozart - Login</title>
+  <%- include('./components/meta') %>
+  <link rel="stylesheet" href="/css/neo.css">
+  <link rel="stylesheet" href="/css/login.css">
+</head>
+<body>
+  <div class='mart-logincont'>
+    <div class='mart-intlogincont'>
+      <img src='/img/logomoz.png' width='385'/>
+      <div class='mart-logintabs'>
+        <button class='button <%= mode==1 ? "inferior" : "" %>' id='mart-login-page-button'>Login</button>
+        <button class='button <%= mode==0 ? "inferior" : "" %>' id='mart-sign-up-page-button'>Sign Up</button>
+      </div>
+      <div class='mart-loginareas'>
+        <form class='mart-login <%= mode==1 ? "hid" : "" %>' id='mart-login-page'>
+          <header>
+            <h2>Login</h2>
+          </header>
+          <hr/>
+          <span class='mart-inputcap'>Username</span>
+          <input placeholder='Username' type='text' id='mart-login-username'></input>
+          <span class='mart-inputcap'>Password</span>
+          <input placeholder='Password' type='password' id='mart-login-password'></input>
+          <input type='submit' class='button blue' value='Login'></input>
+          <span class="mart-input-error" id='mart-login-error'><%= error ?? "" %></span>
+        </form>
+        <form class='mart-login <%= mode==0 ? "hid" : "" %>' id='mart-sign-up-page'>
+          <header>
+            <h2>Sign Up</h2>
+          </header>
+          <hr/>
+          <span class='mart-inputcap'>Username</span>
+          <input placeholder='Username' id='mart-sign-up-username' type='text'></input>
+          <span class='mart-inputcap'>Password</span>
+          <input placeholder='Password' id='mart-sign-up-password' type='password'></input>
+          <!-- required attrib not sumitting so rem-->
+          <input type='submit' class='button blue' value='Sign Up'></input>
+          <span class="mart-input-error" id='mart-sign-up-error'></span>
+        </form>
+      </div>
+      <%- include('./components/footer.ejs') -%>
+    </div>
+  </div>
+  <script src='/js/userapi.js' type='module'></script>
+  <script src='/js/login.js' type='module'></script>
+</body>

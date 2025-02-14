@@ -1,0 +1,15 @@
+<nav id='mart-main-nav'>
+  <div class='navfleft'>
+    <a href='/' id='mart-mainlogo'><img src='/img/logo.png' width='40'/></a>
+  </div>
+  <div class='navfright'>
+    <%= user ? user : "" %>
+    <a href='/chat' class='button'>Chat</a>
+    <% if(user){ %>
+      <button class='button blue' onclick='fetch("/auth/v1/session",{method:"DELETE"}).then(res=>{if(res.status==201){window.location.href="/login"};})'>Log Out</button>
+    <% }else{ %>
+      <a href='/login' class='button green'>Login</a>
+      <a href='/signup' class='button blue'>Sign Up</a>
+    <% } %>
+  </div>
+</nav>

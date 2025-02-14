@@ -1,0 +1,79 @@
+body{
+  background-image: linear-gradient(to right top, #388eff, #2ef1ff);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+@keyframes spread {
+  0% {
+    margin: 0 -50px;
+  }
+}
+
+.mart-login {
+  border-radius: 10px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  background: rgba(240,240,240,0.3);
+  backdrop-filter: blur(5px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  position:absolute;
+  transition: transform .3s ease, opacity .5s ease;
+}
+.mart-logincont {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position:absolute;
+  top:0;
+  left:0;
+  width:100vw;
+  height:100vh;
+  backdrop-filter: blur(10px);
+}
+
+.mart-intlogincont {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: rise .5s ease-in-out;
+}
+
+.mart-logintabs .button {
+  border-radius: 10px 10px 0 0;
+  transition: all .3s ease-in-out;
+  animation: spread .4s ease-out;
+  min-width: 70px;
+}
+
+.mart-logintabs .button.inferior {
+  transform: translateY(10%);
+}
+
+.mart-logintabs {
+  margin-bottom: -5px;
+}
+
+.mart-login.hid {
+  opacity: 0;
+  transform: translateY(50px) scale(0.9) !important; /*rotate(2deg)*/
+}
+.mart-loginareas {
+  display:flex;
+  flex-direction: column;
+  align-content: center;
+  align-items: center;
+  width: 300px;
+  height: 400px;
+}
+.mart-input-error {
+  color: red;
+  font-size: 10px;
+  display: block;
+  margin: 5px;
+  width: 100%;
+  text-align: center;
+}

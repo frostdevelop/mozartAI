@@ -1,0 +1,109 @@
+#mart-chat {
+  display:grid;
+}
+.mart-inp {
+  display: flex;
+  box-sizing: border-box;
+  font-size: 20px;
+  width: 100%;
+  padding: 10px;
+}
+#mart-msgs {
+  height: 80vh;
+  box-sizing: border-box;
+  background: #eee;
+  border-radius: 10px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1), 0 2px 5px white inset;
+  margin: 10px 0;
+  overflow-y: hidden;
+}
+#mart-inp-cont {display:flex;flex-direction:x;align-items:center;}
+.mart-msg{
+  padding: 10px;
+  transition:background .2s ease;
+  animation: rise .2s ease-out;
+}
+.mart-msg:hover {
+  background: rgba(0,0,0,0.05);
+}
+
+.mart-msg .text {font-size: 15px;display: block;margin-left: 50px;}
+.mart-msg .text .name{font-size: 12px;}
+.mart-msg .text .content blockquote,ul,ol,.katex,.katex * {white-space:normal !important;}
+.mart-msg .text .content .katex .base, .katex-html, .mop, .mspace, .mord, .minner {display: inline-flex !important;}
+.mart-msg .text .content * {overflow-wrap: break-word;white-space: pre-wrap;}
+.mart-msg .text .content p {margin:0;}
+.mart-msg .text .content code {color:rgb(0, 112, 0);}
+.mart-msg .text .content h1 {margin: 10px 0;font-size:2em;}
+.mart-msg .text .content h2 {margin: 8px 0;font-size:1.5em;}
+.mart-msg .text .content h3 {margin: 5px 0;font-size:1em;}
+.mart-msg .text .content blockquote {margin:10px 20px;font-size: 15px;}
+.mart-msg .text .content ul,ol {margin: 10px 0;}
+
+.mart-pfp {
+  display:inline;
+  width:40px;height:40px;
+  border-radius: 50%;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.1), 0 2px 5px white inset;
+  float:left;
+  transition: box-shadow .2s linear;
+}
+.mart-pfp:hover {
+  box-shadow: 0 5px 20px rgba(0,0,0,0.3), 0 2px 5px white inset;
+}
+#mart-msgs .scrollarea{
+  overflow-y: auto;
+  height: calc(100% - 60px);
+}
+.mart-sendbtn svg{
+  transition: transform .2s ease;
+}
+.mart-sendbtn:hover svg{
+  transform: rotate(-10deg);
+}
+.mart-question {
+  display:flex;
+  flex-direction:column;
+  padding: 20px;
+  animation: pop .2s ease-in-out;
+  border-radius: 25px !important;
+}
+.mart-question-cont {
+  display:flex;
+  flex-direction:column;
+  padding: 20px !important;
+  margin: 20px 0px !important;
+}
+#mart-header {
+  display:flex;
+  padding: 0 10px;
+  background:#ffff;
+  height: 60px;
+  align-items:center;
+  align-content:center;
+  box-shadow: 0 0 30px rgba(0,0,0,0.3);
+}
+.mart-question .answer {
+  border-radius: 20px;
+  padding: 0px 10px;
+  background: #eee;
+  box-sizing: border-box;
+  height: 0;
+  overflow: hidden;
+  opacity:0;
+  pointer-events: none;
+  display:flex;
+  align-content:center;
+  align-items:center;
+  transition: height .3s ease-in-out, opacity .2s ease-in-out, padding .3s ease-in-out;
+}
+.mart-question .answer.sho {
+  opacity:1;
+  height: 5em;
+  padding: 15px 10px;
+}
+/*
+#mart-main{
+  margin-top:50px;
+}
+*/
