@@ -75,7 +75,6 @@ class msgSys{
       nameelm.innerText = name + " • " + datestuff.splice(1).join(" ");
       nameelm.className = "name";
       const contentelm = document.createElement("span");
-      contentelm.innerText = msg;
       contentelm.className = "content";
       textcont.appendChild(nameelm);
       textcont.appendChild(document.createElement("br"));
@@ -84,7 +83,7 @@ class msgSys{
       msgelm.appendChild(textcont);
       this.msgcont.appendChild(msgelm);
       try{
-        msgSys.processMsg(contentelm);
+        msgSys.processMsg(contentelm,msg);
       }catch(e){console.error(e.stack);contentelm.innerText = msg;}
       msgelm.scrollIntoView();
     }else{
@@ -112,12 +111,14 @@ class msgSys{
     msgSys.ltxRGX.lastIndex = 0;
     return ostr+msgSys.formatTxt(str.substring(ind));
   }
-  static processMsg(msgelm){
-    let remained = msgelm.innerText;
-    msgelm.innerText = "";
+  static processMsg(msgelm,message){
+    let remained = message;
     let parsed;
     while(parsed = msgSys.questionRGX.exec(remained)){
-      msgelm.innerHTML += msgSys.processLtx(remained.substring(0,parsed.index));
+      const mdspan = document.createElement('span');
+      mdspan.classList.add('mart-mdcont');
+      mdspan.innerHTML += msgSys.processLtx(remained.substring(0,parsed.index));
+      msgelm.appendChild(mdspan);
       remained = remained.substr(parsed.index+parsed[0].length);
       switch(parsed[1]){
         case 'short-ans':
@@ -134,61 +135,38 @@ class msgSys{
         msgSys.addQuestion(msgelm,3,{question: parsed[2].substr(2,parsed[2].length-4)});
         break;
         default:
-        //alert(parsed[1]);
-        msgelm.innerHTML += msgSys.processLtx(parsed[0]);
+        console.log("Invalid qType:"+parsed[1]);
+        mdspan.innerHTML += msgSys.processLtx(parsed[0]);
         break;
       }
-      //this.addQuestion(msgelm,parsed[1],parsed[2]);
       msgSys.questionRGX.lastIndex = 0;
-      /*
-      //alert(remained.substr(parseexp.lastIndex));
-      //alert(parsed.index)
-      alert(remained);
-      alert((/!([^\:\s]+)\s*\:({[^}]+})/g).exec(remained));
-      alert(remained);
-      alert(parseexp.exec(remained));
-      */
     }
-    msgelm.innerHTML += msgSys.processLtx(remained);
-    /*
-    const exps = otext.matchAll(/!([^\:\s]+)\s*\:({[^}]+})/g);
-    let lastEnd = 0;
-    for(const exp of exps){
-      msgelm.appendChild(document.createTextNode(otext.substring(lastEnd,exp.index)));
-      this.addQuestion(msgelm,exp[1],JSON.parse(exp[2]));
-      alert(otext.substr(exp.index + exp[0].length));
-      msgelm.appendChild(document.createTextNode(otext.substr(exp.index + exp[0].length)));
-    }
-    */
+    const mdspan = document.createElement('span');
+    mdspan.classList.add('mart-mdcont');
+    mdspan.innerHTML += msgSys.processLtx(remained);
+    msgelm.appendChild(mdspan);
   }
-  static submitShort(btn,ans){
-    const inp = btn.parentElement.children[0];
+  static submitShort(inp,ans,anselm){
     inp.classList.contains('red') && inp.classList.remove('red');
     inp.classList.contains('green') && inp.classList.remove('green');
-    if(inp.value != ans){inp.classList.add('red');}else{inp.classList.add('green');btn.parentElement.parentElement.children[2].classList.add('sho');}
+    if(inp.value != ans){inp.classList.add('red');}else{inp.classList.add('green');anselm.classList.add('sho');}
   }
-  static toggleAns(btn){
-    btn.parentElement.parentElement.children[2].classList.toggle('sho');
-  }
-  static radioChange(radio,ind){
-    const radios = radio.parentElement.parentElement.getElementsByClassName('mart-radio');
+  static radioChange(radios,ind){
     for(let j=0;j<radios.length;j++){
       if(j!=ind){
         radios[j].checked = false;
       }
     }
   }
-  static radioReset(btn){
-    const radios = btn.parentElement.parentElement.getElementsByTagName('label');
+  static radioReset(radios){
     for(let i=0;i<radios.length;i++){
-      radios[i].children[0].checked = false;
-      radios[i].classList.contains('red') && radios[i].classList.remove('red');
-      radios[i].classList.contains('green') && radios[i].classList.remove('green');
+      radios[i].checked = false;
+      radios[i].parentElement.classList.contains('red') && radios[i].parentElement.classList.remove('red');
+      radios[i].parentElement.classList.contains('green') && radios[i].parentElement.classList.remove('green');
     }
   }
-  static radioSubmit(btn,ans){
-    console.log("Submitted.");
-    const radios = btn.parentElement.parentElement.getElementsByClassName('mart-radio');
+  static radioSubmit(radios,ans){
+    //console.log("Submitted.");
     if(radios[ans].checked){
       radios[ans].parentElement.classList.add('green');
       for(let i=0;i<radios.length;i++){
@@ -204,17 +182,15 @@ class msgSys{
       }
     }
   }
-  static selectReset(btn){
-    const sels = btn.parentElement.parentElement.getElementsByClassName('mart-chkbx');
+  static selectReset(sels){
     for(let i=0;i<sels.length;i++){
       sels[i].checked = false;
       sels[i].parentElement.classList.contains('red') && sels[i].parentElement.classList.remove('red');
       sels[i].parentElement.classList.contains('green') && sels[i].parentElement.classList.remove('green');
     }
   }
-  static selectSubmit(btn,ans){
+  static selectSubmit(sels,ans){
     let amtcorr = 0;
-    const sels = btn.parentElement.parentElement.getElementsByClassName('mart-chkbx');
     for(let i=0;i<ans.length;i++){
       const corrsel = sels[ans[i]];
       if(corrsel.checked){
@@ -264,9 +240,9 @@ class msgSys{
       answer.innerText = obj.answer;
       qelm.appendChild(answer);
       if(obj.verify){
-        submitbtn.setAttribute('onclick','msgSys.submitShort(this,"'+obj.answer+'")');
+        submitbtn.addEventListener('click',()=>{msgSys.submitShort(inp,obj.answer,answer)});
       }else{
-        submitbtn.setAttribute('onclick','msgSys.toggleAns(this)');
+        submitbtn.addEventListener('click',()=>{answer.classList.toggle('sho')});
       }
       break;
       case 1:
@@ -281,7 +257,7 @@ class msgSys{
         radios[i] = radio;
         label.appendChild(document.createTextNode(" "+obj.answers[i]));
         qelm.appendChild(label);
-        radio.setAttribute('onclick','msgSys.radioChange(this,'+i.toString()+')')
+        radio.addEventListener('click',()=>{msgSys.radioChange(radios,i)});
         //console.log(radios[i]);
       }
       const btncont = document.createElement('div');
@@ -295,8 +271,8 @@ class msgSys{
       btncont.appendChild(subbtn);
       btncont.appendChild(rstbtn);
       qelm.appendChild(btncont);
-      rstbtn.setAttribute('onclick','msgSys.radioReset(this)');
-      subbtn.setAttribute('onclick','msgSys.radioSubmit(this,'+obj.answer.toString()+')');
+      rstbtn.addEventListener('click',()=>{msgSys.radioReset(radios)});
+      subbtn.addEventListener('click',()=>{msgSys.radioSubmit(radios,obj.answer)});
       break;
       case 2:
       const sels = new Array(obj.answers.length);
@@ -316,11 +292,11 @@ class msgSys{
       const subbtns = document.createElement('button');
       subbtns.className = 'button blue';
       subbtns.innerText = 'Submit';
-      subbtns.setAttribute('onclick','msgSys.selectSubmit(this,['+obj.answer.toString()+'])');
+      subbtns.addEventListener('click',()=>{msgSys.selectSubmit(sels,obj.answer)});
       const rstbtns = document.createElement('button');
       rstbtns.className = 'button blue';
       rstbtns.innerText = 'Reset';
-      rstbtns.setAttribute('onclick','msgSys.selectReset(this)');
+      rstbtns.addEventListener('click',()=>{msgSys.selectReset(sels)});
       btnconts.appendChild(subbtns);
       btnconts.appendChild(rstbtns);
       qelm.appendChild(btnconts);

@@ -31,6 +31,7 @@
 .mart-msg .text .name{font-size: 12px;}
 .mart-msg .text .content blockquote,ul,ol,.katex,.katex * {white-space:normal !important;}
 .mart-msg .text .content .katex .base, .katex-html, .mop, .mspace, .mord, .minner {display: inline-flex !important;}
+.mart-msg .text .content .mart-mdcont {white-space: unset;overflow-wrap: unset;}
 .mart-msg .text .content * {overflow-wrap: break-word;white-space: pre-wrap;}
 .mart-msg .text .content p {margin:0;}
 .mart-msg .text .content code {color:rgb(0, 112, 0);}
@@ -72,7 +73,7 @@
   display:flex;
   flex-direction:column;
   padding: 20px !important;
-  margin: 20px 0px !important;
+  margin: 0px !important;
 }
 #mart-header {
   display:flex;
