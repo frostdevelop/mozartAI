@@ -5,6 +5,7 @@ module.exports = async (req,res)=>{
   if(req.body.username && req.body.password){
     const success = await UserDAO.addUser(req.body.username,req.body.password);
     //console.log("Success: "+success);
+    //console.dir(success);
     if(success && !(success instanceof Error)){
       try{
         const dbres = await axios.post(process.env.MOZART_SERVER+'/acc',success.uuid,{headers:{"Content-Type":"text/plain"}}); //adds stuff into the chat database.

@@ -5,7 +5,6 @@ const socketio = require('socket.io');
 const mongodb = require('mongodb');
 const crypto = require('crypto');
 //const util = require('util');
-//const mongoose = require('mongoose');
 const cookieparse = require('cookie-parser');
 const parsecookie = require('./deps/parsecookie');
 const axios = require('axios');
@@ -20,14 +19,13 @@ const authRouter = require('./web/router/auth.router');
 const reqLogMiddleware = require('./web/middleware/logReqs.middleware');
 const loginPage = require('./web/controller/loginpage.controller');
 const chatPage = require('./web/controller/chatpage.controller');
-//const internal = express(); nvm start a flask server 
 
 dotenv.config();
 
 const redisClient = redis.createClient({
   host: '127.0.0.1',
   port: 6379,
-}); //const redisClient = redis.createClient({url:'redis://localhost:6379'});
+});
 
 redisClient.on('ready',()=>{
   console.log('Redis is ready!');
@@ -40,22 +38,6 @@ redisClient.on('connect',()=>{
 redisClient.on('error',err=>{
   console.error('Redis Error: '+err);
 });
-
-/*
-async function redisConnect(){
-  return new Promise((res,rej)=>{
-    redisClient.on('ready',()=>{
-      console.log('Connected to Redis!');
-      res();
-    });
-    redisClient.on('error',(err)=>{
-      console.log('Redis Error: '+err);
-      rej(err);
-    });
-    //console.log('test');
-  });
-}
-*/
 
 function makeTempSession(socket){
   console.log('Creating temp...')
@@ -97,12 +79,6 @@ app.get('/login',(req,res,next)=>{req.loginmode = 0;next()},loginPage);
 app.get('/signup',(req,res,next)=>{req.loginmode = 1;next()},loginPage);
 app.get('/dashboard',(req,res)=>{res.redirect('/chat');});
 
-/*
-app.post('/msg',async (req,res)=>{
-  res.status(403).send();
-});
-*/
-
 io.on('connection',socket=>{
   //console.log(socket.id);
   //const token = socket.request.headers.cookie.split(';').find(x=>x.startsWith('token')).split('=')[1];
@@ -126,18 +102,6 @@ io.on('connection',socket=>{
             const historyres = [];
             for(let i=0;i<res.data.length;i++){
               historyres.push({'msg':res.data[i].message,'user':(res.data[i].sender==1 ? {'name':'Mozart','pfp':'/img/mozart.png'} : {'name':username,'pfp':'/img/user.png'})});
-              /*
-              switch(historyarr[i].sender){
-                case 0:
-                  historyres.push({'msg':historyarr[i].message});
-                  break;
-                case 1:
-                  historyres.push({'msg':historyarr[i].message});
-                  break;
-                default:
-                  console.error('Invalid Sender ID: '+historyarr[i].sender);
-              }
-              */
             }
             socket.emit('history',historyres);
           }else{
@@ -156,12 +120,8 @@ io.on('connection',socket=>{
     console.log('No token');
     socketuuid = makeTempSession(socket);
   };
-  
-  /*
-  socket.emit('history',[{user:{name:"test",pfp:"https://i.guim.co.uk/img/static/sys-images/Guardian/Pix/arts/2006/01/26/moz3128.jpg?width=465&dpr=1&s=none&crop=none"},msg:"Testing..."}]);
-  */
+
   socket.on('send',msg=>{
-    //socket.emit('recieve','FUCK YOU !short-ans:{"question":"What is the meaning of life?","answer":"42"} id:'+socket.id);
     axios.post(process.env.MOZART_SERVER+'/msg',msg,{headers:{"Content-Type":"text/plain","uuid":socketuuid}}).then(res=>{
       //console.log(res.data);
       if(res.status == 200){
@@ -203,30 +163,12 @@ io.on('connection',socket=>{
     console.log('Connecting to Redis...')
     await redisClient.connect();
     tokenSys.injectRedis(redisClient);
-
-    /*
-    await redisClient.set('test','test');
-    console.log(await redisClient.get('test'));
-    await redisClient.del('test');
-    */
-
-    /*
-    const test = await tokenSys.generateToken("abcdefg");
-    console.log(test);
-    console.log(await tokenSys.verifyToken(test));
-    console.log(await tokenSys.removeToken(test));
-    */
     
     console.log('Connecting to mongodb...')
     await client.connect();
     console.log('Mongodb successfully connected.\nConnecting to database...')
     await UserDAO.injectDB(client);
     console.log('Database successfully connected.');
-    
-    /*
-    await UserDAO.addUser({username:'test',password:'test'});
-    console.log(await UserDAO.getUUID('test'));
-    */
 
     console.log('Starting server...');
     server.listen(process.env.PORT,err=>{

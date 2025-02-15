@@ -27,7 +27,9 @@ class UserDao{
           uuid: crypto.randomUUID(),
           password: await bcrypt.hash(password,10),
         }
-        return await users.insertOne(userDoc)
+        const res = await users.insertOne(userDoc);
+        res.uuid = userDoc.uuid;
+        return res;
       }
       catch(e){
         console.error(`unable to sign up ${e}`)
