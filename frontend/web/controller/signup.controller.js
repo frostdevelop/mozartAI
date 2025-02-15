@@ -7,8 +7,8 @@ module.exports = async (req,res)=>{
     //console.log("Success: "+success);
     if(success && !(success instanceof Error)){
       try{
-        const res = await axios.post(process.env.MOZART_SERVER+'/acc',success.uuid,{headers:{"Content-Type":"text/plain"}}); //adds stuff into the chat database.
-        if(res.status == 201){
+        const dbres = await axios.post(process.env.MOZART_SERVER+'/acc',success.uuid,{headers:{"Content-Type":"text/plain"}}); //adds stuff into the chat database.
+        if(dbres.status == 201){
           res.status(201).send();
         }else{
           await UserDAO.removeUser(success.uuid);

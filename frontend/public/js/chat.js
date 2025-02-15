@@ -122,19 +122,19 @@ class msgSys{
       switch(parsed[1]){
         case 'short-ans':
         //alert(JSON.parse(exp[2]));
-        this.addQuestion(msgelm,0,JSON.parse(parsed[2]));
+        msgSys.addQuestion(msgelm,0,JSON.parse(parsed[2]));
         break;
         case 'multc':
-        this.addQuestion(msgelm,1,JSON.parse(parsed[2]));
+        msgSys.addQuestion(msgelm,1,JSON.parse(parsed[2]));
         break;
         case 'selec':
-        this.addQuestion(msgelm,2,JSON.parse(parsed[2]));
+        msgSys.addQuestion(msgelm,2,JSON.parse(parsed[2]));
         break;
         case 'block':
-        this.addQuestion(msgelm,3,{question: parsed[2].substr(2,parsed[2].length-4)});
+        msgSys.addQuestion(msgelm,3,{question: parsed[2].substr(2,parsed[2].length-4)});
         break;
         default:
-        alert(parsed[1]);
+        //alert(parsed[1]);
         msgelm.innerHTML += msgSys.processLtx(parsed[0]);
         break;
       }
@@ -161,12 +161,87 @@ class msgSys{
     }
     */
   }
-  addQuestion(msgelm,type,obj){
+  static submitShort(btn,ans){
+    const inp = btn.parentElement.children[0];
+    inp.classList.contains('red') && inp.classList.remove('red');
+    inp.classList.contains('green') && inp.classList.remove('green');
+    if(inp.value != ans){inp.classList.add('red');}else{inp.classList.add('green');btn.parentElement.parentElement.children[2].classList.add('sho');}
+  }
+  static toggleAns(btn){
+    btn.parentElement.parentElement.children[2].classList.toggle('sho');
+  }
+  static radioChange(radio,ind){
+    const radios = radio.parentElement.parentElement.getElementsByClassName('mart-radio');
+    for(let j=0;j<radios.length;j++){
+      if(j!=ind){
+        radios[j].checked = false;
+      }
+    }
+  }
+  static radioReset(btn){
+    const radios = btn.parentElement.parentElement.getElementsByTagName('label');
+    for(let i=0;i<radios.length;i++){
+      radios[i].children[0].checked = false;
+      radios[i].classList.contains('red') && radios[i].classList.remove('red');
+      radios[i].classList.contains('green') && radios[i].classList.remove('green');
+    }
+  }
+  static radioSubmit(btn,ans){
+    console.log("Submitted.");
+    const radios = btn.parentElement.parentElement.getElementsByClassName('mart-radio');
+    if(radios[ans].checked){
+      radios[ans].parentElement.classList.add('green');
+      for(let i=0;i<radios.length;i++){
+        if(i!=ans){
+          radios[i].parentElement.classList.add('red');
+        }
+      }
+    }else{
+      for(let i=0;i<radios.length;i++){
+        if(radios[i].checked){
+          radios[i].parentElement.classList.add('red');
+        }
+      }
+    }
+  }
+  static selectReset(btn){
+    const sels = btn.parentElement.parentElement.getElementsByClassName('mart-chkbx');
+    for(let i=0;i<sels.length;i++){
+      sels[i].checked = false;
+      sels[i].parentElement.classList.contains('red') && sels[i].parentElement.classList.remove('red');
+      sels[i].parentElement.classList.contains('green') && sels[i].parentElement.classList.remove('green');
+    }
+  }
+  static selectSubmit(btn,ans){
+    let amtcorr = 0;
+    const sels = btn.parentElement.parentElement.getElementsByClassName('mart-chkbx');
+    for(let i=0;i<ans.length;i++){
+      const corrsel = sels[ans[i]];
+      if(corrsel.checked){
+        corrsel.parentElement.classList.add('green');
+        amtcorr++;
+      }
+    }
+    if(amtcorr == ans.length){
+      for(let i=0;i<sels.length;i++){
+        if(!ans.includes(i)){
+          sels[i].parentElement.classList.add('red');
+        }
+      }
+    }else{
+      for(let i=0;i<sels.length;i++){
+        if(sels[i].checked && !ans.includes(i)){
+          sels[i].parentElement.classList.add('red');
+        }
+      }
+    }
+  }
+  static addQuestion(msgelm,type,obj){
     //alert(type);
     const qcont = document.createElement('div');
     qcont.className = 'mart-question-cont';
     const qelm = document.createElement('div');
-    //qelm.value = type;
+    qelm.value = type;
     qelm.className = "mart-question contsolid";
     const promptelm = document.createElement('span');
     promptelm.className = 'prompt';
@@ -189,13 +264,9 @@ class msgSys{
       answer.innerText = obj.answer;
       qelm.appendChild(answer);
       if(obj.verify){
-        submitbtn.addEventListener('click',()=>{
-          inp.classList.contains('red') && inp.classList.remove('red');
-          inp.classList.contains('green') && inp.classList.remove('green');
-          if(inp.value != obj.answer){inp.classList.add('red');/*setTimeout(()=>{inp.classList.remove('red')},500);*/}else{inp.classList.add('green');/*setTimeout(()=>{inp.classList.remove('green')},500)*/;answer.classList.add('sho');}
-        });
+        submitbtn.setAttribute('onclick','msgSys.submitShort(this,"'+obj.answer+'")');
       }else{
-        submitbtn.addEventListener('click',()=>{answer.classList.toggle('sho');});
+        submitbtn.setAttribute('onclick','msgSys.toggleAns(this)');
       }
       break;
       case 1:
@@ -205,52 +276,27 @@ class msgSys{
         label.className = 'contsolid';
         const radio = document.createElement('input');
         radio.type = 'radio';
+        radio.classList.add('mart-radio')
         label.appendChild(radio);
         radios[i] = radio;
         label.appendChild(document.createTextNode(" "+obj.answers[i]));
         qelm.appendChild(label);
-        radio.addEventListener('change',()=>{
-          for(let j=0;j<radios.length;j++){
-            if(j!=i){
-              radios[j].checked = false;
-            }
-          }
-        });
+        radio.setAttribute('onclick','msgSys.radioChange(this,'+i.toString()+')')
+        //console.log(radios[i]);
       }
       const btncont = document.createElement('div');
       btncont.className = 'contsolid';
       const subbtn = document.createElement('button');
       subbtn.className = 'button blue';
       subbtn.innerText = 'Submit';
-      subbtn.addEventListener('click',()=>{
-        if(radios[obj.answer].checked){
-          radios[obj.answer].parentElement.classList.add('green');
-          for(let i=0;i<radios.length;i++){
-            if(i!=obj.answer){
-              radios[i].parentElement.classList.add('red');
-            }
-          }
-        }else{
-          for(let i=0;i<radios.length;i++){
-            if(radios[i].checked){
-              radios[i].parentElement.classList.add('red');
-            }
-          }
-        }
-      });
       const rstbtn = document.createElement('button');
       rstbtn.className = 'button blue';
       rstbtn.innerText = 'Reset';
-      rstbtn.addEventListener('click',()=>{
-        for(let i=0;i<radios.length;i++){
-          radios[i].checked = false;
-          radios[i].parentElement.classList.contains('red') && radios[i].parentElement.classList.remove('red');
-          radios[i].parentElement.classList.contains('green') && radios[i].parentElement.classList.remove('green');
-        }
-      });
       btncont.appendChild(subbtn);
       btncont.appendChild(rstbtn);
       qelm.appendChild(btncont);
+      rstbtn.setAttribute('onclick','msgSys.radioReset(this)');
+      subbtn.setAttribute('onclick','msgSys.radioSubmit(this,'+obj.answer.toString()+')');
       break;
       case 2:
       const sels = new Array(obj.answers.length);
@@ -259,6 +305,7 @@ class msgSys{
         label.className = 'contsolid';
         const chkbx = document.createElement('input');
         chkbx.type = 'checkbox';
+        chkbx.classList.add('mart-chkbx');
         label.appendChild(chkbx);
         sels[i] = chkbx;
         label.appendChild(document.createTextNode(" "+obj.answers[i]));
@@ -269,39 +316,11 @@ class msgSys{
       const subbtns = document.createElement('button');
       subbtns.className = 'button blue';
       subbtns.innerText = 'Submit';
-      subbtns.addEventListener('click',()=>{
-        let amtcorr = 0;
-        for(let i=0;i<obj.answer.length;i++){
-          const corrsel = sels[obj.answer[i]];
-          if(corrsel.checked){
-            corrsel.parentElement.classList.add('green');
-            amtcorr++;
-          }
-        }
-        if(amtcorr == obj.answer.length){
-          for(let i=0;i<sels.length;i++){
-            if(!obj.answer.includes(i)){
-              sels[i].parentElement.classList.add('red');
-            }
-          }
-        }else{
-          for(let i=0;i<sels.length;i++){
-            if(sels[i].checked && !obj.answer.includes(i)){
-              sels[i].parentElement.classList.add('red');
-            }
-          }
-        }
-      });
+      subbtns.setAttribute('onclick','msgSys.selectSubmit(this,['+obj.answer.toString()+'])');
       const rstbtns = document.createElement('button');
       rstbtns.className = 'button blue';
       rstbtns.innerText = 'Reset';
-      rstbtns.addEventListener('click',()=>{
-        for(let i=0;i<sels.length;i++){
-          sels[i].checked = false;
-          sels[i].parentElement.classList.contains('red') && sels[i].parentElement.classList.remove('red');
-          sels[i].parentElement.classList.contains('green') && sels[i].parentElement.classList.remove('green');
-        }
-      });
+      rstbtns.setAttribute('onclick','msgSys.selectReset(this)');
       btnconts.appendChild(subbtns);
       btnconts.appendChild(rstbtns);
       qelm.appendChild(btnconts);
